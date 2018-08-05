@@ -1,0 +1,15 @@
+{
+  "name": "mailing_service",
+  "version": "1.0.0",
+  "description": "This is the Mailing Service",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Flo Sloot",
+  "license": "ISC",
+  "dependencies": {
+    "amqplib": "^0.5.2",
+    "node-mailjet": "^3.2.1"
+  }
+}

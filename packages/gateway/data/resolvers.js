@@ -1,38 +1,36 @@
-// type Mail {
-//   subject: String
-//   receiver: String
-//   content: String
-//   _id: String
-// }
+const axios = require('axios');
+const { serviceDatabase: { port } } = require('../config');
 
-const mockMails = [
-  {
-    subject: 'My first Email',
-    receiver: 'test@test.com',
-    content: 'hello world'
-  },
-  {
-    subject: 'My second Email',
-    receiver: 'test@test.com',
-    content: 'hello world'
-  },
-  {
-    subject: 'My third Email',
-    receiver: 'test@test.com',
-    content: 'hello world'
-  }
-];
+const { pushToMessageQ } = require('../Q/connect');
+
+const hostname = 'http://localhost';
+const databaseURL = `${hostname}:${port}`;
+
+const get = async path =>
+  (await axios.get(`${databaseURL}/${path}`)).data.payload;
+
+const post = async (path, body) =>
+  (await axios.post(`${databaseURL}/${path}`, { ...body })).data.payload;
 
 module.exports = {
   Query: {
-    mails: () => mockMails,
-    mail: (_, args) => mockMails[0]
+    mails: () => get('mails'),
+    mail: (_, { id }) => get(`mails/${id}`)
   },
   Mutation: {
     mail: (_, args) => {
-      mockMails[0] = args;
+      let result;
+      let error;
 
-      return args;
+      try {
+        result = post('mails', args);
+      } catch (e) {
+        error = e;
+      }
+
+      pushToMessageQ(JSON.stringify(args));
+
+      return result || error;
     }
   }
 };

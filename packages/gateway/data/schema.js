@@ -4,7 +4,7 @@ const resolvers = require('./resolvers');
 const typeDefs = `
   type Query {
     mails: [Mail]
-    mail(subject: String!, receiver: String!): Mail
+    mail(id: String!): Mail
   }
 
   type Mutation {
